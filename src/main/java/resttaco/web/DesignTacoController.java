@@ -1,6 +1,9 @@
 package resttaco.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.EntityModel;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -30,14 +33,26 @@ public class DesignTacoController {
 
     @GetMapping(path = "/{id}", produces = "application/json")
     @ResponseBody
-    private Taco getTaco(@PathVariable Long id) {
-        return tacoRepository.findById(id).orElse(new Taco());
+    private EntityModel<Taco> getTacoById(@PathVariable Long id) {
+        Taco taco = tacoRepository.findById(id).orElse(null);
+        // http://localhost:8080/tacos/1?order
+        return EntityModel.of(
+                taco,
+                linkTo(methodOn(DesignTacoController.class).getTacoById(id)).withSelfRel(),
+                linkTo(methodOn(DesignTacoController.class).allTacos()).withRel("design")
+        );
+    }
+
+    @GetMapping
+    @ResponseBody
+    public Iterable<Taco> allTacos() {
+        return tacoRepository.findAll();
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    private void postTaco(@RequestBody TacoDTO dto) {
+    private Taco postTaco(@RequestBody TacoDTO dto) {
         // declare list to hold ingredients
         List<Ingredient> tacoIngredients = new ArrayList<>();
         // take the ids from the ingredients and search the ingredients table by id, add the found ingredient objects to the list
@@ -46,5 +61,6 @@ public class DesignTacoController {
         Taco taco =  dto.convertToTaco(tacoIngredients);
         // return the taco to the front end
         tacoRepository.save(taco);
+        return taco;
     }
 }

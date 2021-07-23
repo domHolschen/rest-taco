@@ -14,6 +14,7 @@ public class RestTacoApplication {
 		SpringApplication.run(RestTacoApplication.class, args);
 	}
 
+
 	@Bean
 	public CommandLineRunner dataLoader(UserRepository userRepo) {
 		// user repo for ease of testing with a built-in user
@@ -26,5 +27,4 @@ public class RestTacoApplication {
 			}
 		};
 	}
-
 }

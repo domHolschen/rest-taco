@@ -23,7 +23,7 @@ public class MyUserDetails implements UserDetails {
     public MyUserDetails(User user) {
         this.username = user.getUsername();
         this.password = user.getPassword();
-        this.authorities = Arrays.stream(user.getAuthorities().split(","))
+        this.authorities = Arrays.stream(user.getRoles().split(","))
                 .map(SimpleGrantedAuthority::new).collect(Collectors.toList());
         this.id = user.getId();
     }

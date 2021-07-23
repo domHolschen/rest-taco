@@ -22,7 +22,7 @@ public class User {
     private String state;
     private String zip;
     private String phoneNumber;
-    private String authorities;
+    private String roles;
 
     public User(String username, String password, String fullname, String street, String city, String state, String zip, String phoneNumber) {
         this();
@@ -37,6 +37,6 @@ public class User {
     }
 
     public User() {
-        this.authorities = "FRENCH_FRIES";
+        this.roles = "FRENCH_FRIES";
     }
 }

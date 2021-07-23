@@ -2,6 +2,8 @@ package resttaco.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import resttaco.data.IngredientRepository;
 import resttaco.data.OrderRepository;
@@ -10,6 +12,8 @@ import resttaco.data.UserRepository;
 import resttaco.domain.Order;
 import resttaco.domain.OrderDTO;
 import resttaco.domain.Taco;
+import resttaco.domain.User;
+import resttaco.security.MyUserDetails;
 
 import java.util.ArrayList;
 
@@ -41,7 +45,11 @@ public class OrderController {
         // creates a new Order object and adds to taco list and dtoOrder to object
         Order order = new Order(dto.getName(), dto.getStreet(), dto.getCity(), dto.getState(), dto.getZip(), dto.getCcNumber(), dto.getCcExpiration(), dto.getCcCVV(), orderTacos);
         // finds user by id and adds to an order object
-        order.setUser(userRepository.findById(dto.getUserId()).orElse(null));
+
+        Authentication fake = SecurityContextHolder.getContext().getAuthentication();
+        MyUserDetails myUserDetails = (MyUserDetails) fake.getPrincipal();
+
+        order.setUser(userRepository.findById(myUserDetails.getId()).orElse(null));
         return orderRepository.save(order);
     }
 }
